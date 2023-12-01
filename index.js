@@ -19,12 +19,12 @@ const nameEl = document.querySelector('.name');
 const textEl = document.querySelector('.text');
 
 const testimonials = [{
-	text: 'I had my concerns that due to a tight deadline this project can\'t be done. But Florin proved me wrong not only he delivered an outstanding work but he managed to deliver 1 day prior to the deadline. And when I asked for some revisions he made them in MINUTES. I\'m looking forward to work with him again and I totally recommend him. Thanks again Florin!',
-	name: 'Zeck Robert',
+	text: 'Cynthia Atieno, orphaned at a young age, found solace and family at Otacho Christian Children\'s Home. This haven provided not just shelter but love, education, and a supportive community. The nurturing environment transformed her life, offering hope and opportunities. Cynthia, now on the brink of a promising future, expresses gratitude to the caregivers, staff, and supporters who believed in her potential. Your contribution to Otacho Christian Children\'s Home goes beyond a building—it plants seeds of hope, changes lives, and empowers children to dream.',
+	name: 'Cynthia Atieno',
 	color: '#feca57'
 },{
-	text: 'Second time hiring him. Finished everything in a timely manner and his work is excellent. Can\'t recommend him enough.',
-	name: 'Clark Kent',
+	text: '',
+	name: 'Joy clara',
 	color: 'rgba(250, 130, 49,1.0)'
 },{
 	text: 'Alexandru Florin never fails to impress me by the quality of his work and delivering on time. When it comes to front-end, he is definitely my go to guy. Always is a pleasure to work with Alexandru even when deadlines are tight and pressure is great. It\'s reassuring to have a project in such good hands.',
