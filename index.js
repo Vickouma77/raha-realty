@@ -23,7 +23,7 @@ const testimonials = [{
 	name: 'Cynthia Atieno',
 	color: '#feca57'
 },{
-	text: '',
+	text: 'Joy Clara, a longstanding member of Otacho Christian Children\'s Home, shares a profound journey enriched by the transformative programs offered. Having spent a significant part of her life here, Joy attests to the incredible impact of the home\'s initiatives. Through unwavering support, education, and a nurturing environment, she has not only found stability but thrived. Joy\'s success is a testament to the effectiveness of the programs and the dedication of those behind Otacho Christian Children\'s Home. Your support contributes to creating success stories like Joy\'s, fostering lasting positive change',
 	name: 'Joy clara',
 	color: 'rgba(250, 130, 49,1.0)'
 },{
