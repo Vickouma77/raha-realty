@@ -23,20 +23,20 @@ const testimonials = [{
 	name: 'Cynthia Atieno',
 	color: '#feca57'
 },{
-	text: 'Joy Clara, a longstanding member of Otacho Christian Children\'s Home, shares a profound journey enriched by the transformative programs offered. Having spent a significant part of her life here, Joy attests to the incredible impact of the home\'s initiatives. Through unwavering support, education, and a nurturing environment, she has not only found stability but thrived. Joy\'s success is a testament to the effectiveness of the programs and the dedication of those behind Otacho Christian Children\'s Home. Your support contributes to creating success stories like Joy\'s, fostering lasting positive change',
-	name: 'Joy clara',
+	text: 'Shanel Atieno, a longstanding member of Otacho Christian Children\'s Home, shares a profound journey enriched by the transformative programs offered. Having spent a significant part of her life here, Shanel attests to the incredible impact of the home\'s initiatives. Through unwavering support, education, and a nurturing environment, she has not only found stability but thrived. Shanel\'s success is a testament to the effectiveness of the programs and the dedication of those behind Otacho Christian Children\'s Home. Your support contributes to creating success stories like Shanel\'s, fostering lasting positive change',
+	name: 'Shanel Atieno',
 	color: 'rgba(250, 130, 49,1.0)'
 },{
-	text: 'Alexandru Florin never fails to impress me by the quality of his work and delivering on time. When it comes to front-end, he is definitely my go to guy. Always is a pleasure to work with Alexandru even when deadlines are tight and pressure is great. It\'s reassuring to have a project in such good hands.',
-	name: 'Otonglo Jaduong',
+	text: 'Jerusa Achieng, a resilient spirit, has called Otacho Christian Children\'s Home her haven for the past decade. Now, on the brink of sitting for her national exams, Jerusa\'s journey is a testament to the transformative power of this supportive community. The home\'s commitment to education, care, and empowerment has fueled her aspirations. Your support for Otacho Christian Children\'s Home contributes to success stories like Jerusa\'s, empowering children to overcome challenges and excel in their pursuits. Join us in championing the dreams of children who deserve a chance to succeed',
+	name: 'Jerusa Achieng',
 	color: 'rgba(75, 123, 236,1.0)'
 },{
-	text: 'Florin has been of great help on our different web projects. He is very trustworthy and serious in the work done. Keep on the good work and energy, been a pleasure to collaborate.',
-	name: 'Mulili Mwala',
+	text: 'Gift Akinyi, born into adversity with the passing of her father and the tragic loss of her mother during childbirth, found solace at Otacho Christian Children\'s Home. At just 3 years old, Gift has been embraced by the loving community that provides her with care, support, and hope for the future. Your support for Otacho Christian Children\'s Home helps create a nurturing environment where children like Gift can thrive despite early challenges. Join us in making a difference for Gift and others, offering them a chance for a brighter tomorrow.',
+	name: 'Gift Akinyi',
 	color: '#1dd1a1'
 },{
-	text: 'I hired Florin Pop based on others positive experiences, and I understand why he\'s so highly rated. His code is very clean, he communicates well, and he likes to offer alternative solutions.',
-	name: 'Kanye South',
+	text: 'Stallon Mark, a resilient 5-year-old, faced early challenges with the loss of his grandmother and unknown parentage. For the past four years, Otacho Christian Children\'s Home has been his refuge, providing love, care, and a nurturing environment. Stallon, despite his young age, embodies the positive impact of the home\'s support. Your contributions to Otacho Christian Children\'s Home help children like Stallon build a foundation of security and hope for a brighter future. Join us in making a difference in the lives of children who deserve a chance to thrive',
+	name: 'Stallon Mark',
 	color: '#ff2828'
 }];
 
