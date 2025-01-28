@@ -1,4 +1,4 @@
-use sqlx::{PgPool};
+pub use sqlx::PgPool;
 use uuid::Uuid;
 use crate::models::Property;
 
