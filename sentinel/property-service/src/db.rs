@@ -45,7 +45,7 @@ pub async fn get_all_properties(pool: &PgPool) -> Result<Vec<Property>, sqlx::Er
         .await
 }
 
-pub async fn update_property(pool: &PgPool, property: Property) -> Result<(), sqlx::Error> {
+pub async fn update_property(pool: &PgPool, property: &Property) -> Result<(), sqlx::Error> {
     sqlx::query!(
         r#"
         UPDATE properties
