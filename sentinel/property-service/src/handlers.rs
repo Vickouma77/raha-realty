@@ -19,7 +19,7 @@ pub async fn get_property(pool: web::Data<PgPool>, property_id: web::Path<Uuid>)
     }
 }
 
-pub async fn get_all_property(pool: web::Data<PgPool>) -> HttpResponse {
+pub async fn get_all_properties(pool: web::Data<PgPool>) -> HttpResponse {
     match db::get_all_properties(&pool).await {
         Ok(properties ) => HttpResponse::Ok().json(properties),
         Err(_) => HttpResponse::InternalServerError().finish(),
