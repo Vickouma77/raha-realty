@@ -1,4 +1,5 @@
 mod models;
+mod db;
 
 use actix_web::{web, App, HttpServer, Responder};
 
