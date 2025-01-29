@@ -10,4 +10,7 @@ serde_json = "1.0.137"
 uuid = {version = "1.12.1", features = ["v4", "serde"]}
 dotenv = "0.15.0"
 bigdecimal = {version = "0.4.7", features = ["serde"]}
-sqlx = {version = "0.8.3", features = ["runtime-async-std-native-tls", "postgres", "uuid", "bigdecimal"]}
+sqlx = {version = "0.8.3", features = ["runtime-async-std-native-tls", "postgres", "uuid", "bigdecimal", "migrate"]}
+
+[dev-dependencies]
+actix-rt = "2"

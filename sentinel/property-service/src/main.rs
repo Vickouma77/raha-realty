@@ -1,12 +1,8 @@
+use property_service::handlers;
 use actix_web::{web, App, HttpServer};
 use dotenv::dotenv;
 use sqlx::PgPool;
 use std::env;
-
-mod models;
-mod db;
-mod handlers;
-
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
