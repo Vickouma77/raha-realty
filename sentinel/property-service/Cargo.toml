@@ -11,6 +11,7 @@ uuid = {version = "1.12.1", features = ["v4", "serde"]}
 dotenv = "0.15.0"
 bigdecimal = {version = "0.4.7", features = ["serde"]}
 sqlx = {version = "0.8.3", features = ["runtime-async-std-native-tls", "postgres", "uuid", "bigdecimal", "migrate"]}
+rdkafka = {version = "0", features = ["cmake-build"]}
 
 [dev-dependencies]
 actix-rt = "2"

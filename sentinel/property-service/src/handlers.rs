@@ -2,11 +2,22 @@ use actix_web::{web, HttpResponse};
 use uuid::Uuid;
 use crate::models::Property;
 use crate::db::{self, PgPool};
+use crate::kafka::{produce_event, PropertyEvent};
 
 pub async fn  create_property(pool: web::Data<PgPool>, new_property: web::Json<Property>) -> HttpResponse {
     let property = new_property.into_inner();
     match db::create_property(&pool, &property).await {
-        Ok(_) => HttpResponse::Created().json(property),
+        Ok(_) => {
+            // Produce property created event
+            let event = PropertyEvent::Created {
+                id: property.id,
+                address: property.address.clone(),
+            };
+            if let Err(e) = produce_event(event).await {
+                eprintln!("Failed to produce event: {}", e);
+            }
+            HttpResponse::Created().json(property)
+        }
         Err(_) => HttpResponse::InternalServerError().finish(),
     }
 }
