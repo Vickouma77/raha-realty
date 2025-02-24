@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "services/auth",
+]
+resolver = "2"
+
+[workspace.dependencies]

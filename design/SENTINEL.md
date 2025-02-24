@@ -39,7 +39,7 @@
 # Standardized Directory Structure
 
 ```
-sentinel/
+core/
 ├── property-service/
 │   ├── src/
 │   │   ├── main.rs            # Entry point
