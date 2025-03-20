@@ -5,11 +5,6 @@
 - [Architecture](#architecture)
 - [Components](#components)
 - [Technologies](#technologies)
-- [Deployment](#deployment)
-- [Development](#development)
-- [Testing](#testing)
-- [Monitoring](#monitoring)
-- [Security](#security)
 
 ## Introduction
 This document describes the architecture of the Raha Realty application.
