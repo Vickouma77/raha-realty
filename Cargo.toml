@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    "gateway",
     "services/auth",
 ]
 resolver = "2"
