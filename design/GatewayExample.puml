@@ -1,0 +1,25 @@
+@startuml
+actor Client
+participant "API Gateway" as Gateway
+participant "User Management Service" as UserService
+participant "Property Listings Service" as PropertyService
+participant "Event Bus" as Bus
+
+Client -> Gateway: GET /properties (with Authorization header)
+Gateway -> Gateway: Validate JWT token
+alt Token Invalid
+    Gateway -> Client: 401 Unauthorized
+else Token Valid
+    Gateway -> UserService: Verify token (optional sync call)
+    UserService -> Gateway: Token valid
+    Gateway -> PropertyService: Forward GET /properties
+    PropertyService -> Gateway: 200 OK (JSON: property list)
+    Gateway -> Client: 200 OK (JSON: property list)
+    PropertyService -> Bus: Publish PropertySearchRequested event
+    note right: Async EDA step\n(e.g., for search analytics)
+end
+
+Bus -> Gateway: (Future: Subscribe to events if needed)
+Gateway -> Client: (Future: Push updates if subscribed)
+
+@enduml
