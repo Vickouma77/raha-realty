@@ -1,4 +1,4 @@
-@startuml
+@startuml GatewayExample
 actor Client
 participant "API Gateway" as Gateway
 participant "User Management Service" as UserService
