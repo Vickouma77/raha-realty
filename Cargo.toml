@@ -6,3 +6,5 @@ members = [
 resolver = "2"
 
 [workspace.dependencies]
+actix-web = "4.10.2"
+tokio = { version = "1.44.1", features = ["full"] }
