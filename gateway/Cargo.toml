@@ -3,6 +3,13 @@ name = "gateway"
 version = "0.1.0"
 edition = "2024"
 
+[[bin]]
+name = "gateway"
+path = "src/main.rs"
+
+[lib]
+path = "src/lib.rs"
+
 [dependencies]
 actix-web = { workspace = true }
 tokio = { workspace = true, features = ["full"] }
