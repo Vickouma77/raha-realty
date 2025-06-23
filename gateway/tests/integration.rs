@@ -1,5 +1,5 @@
-use tokio;
 use gateway::config::AppState;
+use tokio;
 
 #[tokio::test]
 async fn test_read_service_config() {

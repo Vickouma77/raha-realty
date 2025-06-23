@@ -1,6 +1,6 @@
+use reqwest::Client;
 use std::collections::HashMap;
 use std::sync::Arc;
-use reqwest::Client;
 use tokio::sync::RwLock;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -43,9 +43,10 @@ impl AppState {
         services.insert(
             "properties".to_string(),
             ServiceConfig {
-                instance: vec![
-                    ServiceInstance::new("http://localhost:8001/properties", InstanceStatus::Unhealthy),
-                ],
+                instance: vec![ServiceInstance::new(
+                    "http://localhost:8001/properties",
+                    InstanceStatus::Unhealthy,
+                )],
             },
         );
         AppState {
@@ -62,7 +63,8 @@ mod tests {
 
     #[test]
     fn test_create_service_instance() {
-        let instance = ServiceInstance::new("http://localhost:8001/properties", InstanceStatus::Healthy);
+        let instance =
+            ServiceInstance::new("http://localhost:8001/properties", InstanceStatus::Healthy);
         assert_eq!(instance.url, "http://localhost:8001/properties");
         assert_eq!(instance.active, InstanceStatus::Healthy);
     }
@@ -72,7 +74,7 @@ mod tests {
         let app_state = AppState::new();
         let services = app_state.services.clone();
         let services = futures::executor::block_on(services.read());
-        
+
         assert!(services.contains_key("properties"));
         let config = services.get(&"properties".to_string()).unwrap();
         assert_eq!(config.instance.len(), 1);

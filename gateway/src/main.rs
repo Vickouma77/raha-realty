@@ -1,13 +1,12 @@
-use actix_web::{middleware, web, App, HttpServer};
-use log::info;
+use actix_web::{App, HttpServer, middleware, web};
 use gateway::config::AppState;
+use log::info;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-
     // Initialize the logger
     env_logger::init();
-    
+
     // Initialize application state
     let state = AppState::new();
 
