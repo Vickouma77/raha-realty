@@ -8,5 +8,5 @@ async fn test_read_service_config() {
 
     assert!(services.contains_key("properties"));
     let config = services.get("properties").unwrap();
-    assert_eq!(config.instance[0].url, "http://localhost:8001/properties");
+    assert_eq!(config.instances[0].url, "http://localhost:8001/properties");
 }

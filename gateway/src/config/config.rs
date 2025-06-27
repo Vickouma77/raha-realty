@@ -18,7 +18,7 @@ pub struct ServiceInstance {
 
 #[derive(Clone)]
 pub struct ServiceConfig {
-    pub instance: Vec<ServiceInstance>,
+    pub instances: Vec<ServiceInstance>,
 }
 
 #[derive(Clone)]
@@ -43,7 +43,7 @@ impl AppState {
         services.insert(
             "properties".to_string(),
             ServiceConfig {
-                instance: vec![ServiceInstance::new(
+                instances: vec![ServiceInstance::new(
                     "http://localhost:8001/properties",
                     InstanceStatus::Unhealthy,
                 )],
@@ -77,7 +77,7 @@ mod tests {
 
         assert!(services.contains_key("properties"));
         let config = services.get(&"properties".to_string()).unwrap();
-        assert_eq!(config.instance.len(), 1);
-        assert_eq!(config.instance[0].active, InstanceStatus::Unhealthy);
+        assert_eq!(config.instances.len(), 1);
+        assert_eq!(config.instances[0].active, InstanceStatus::Unhealthy);
     }
 }
