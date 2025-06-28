@@ -3,6 +3,7 @@ use actix_web::{App, HttpServer, middleware, web, HttpResponse};
 use gateway::config::AppState;
 use gateway::auth::AuthMiddleware;
 use log::info;
+use gateway::proxy::proxy;
 use gateway::routes::{login, register};
 
 #[actix_web::main]
@@ -28,6 +29,7 @@ async fn main() -> std::io::Result<()> {
             .route("/register", web::get().to(login))
             .route("/health", web::get().to(|| async { HttpResponse::Ok().finish() }))
             .route("/secure", web::get().to(|| async { HttpResponse::Ok().body("Secure data") }))
+            .route("/api/{service_name}/{tail:.*}", web::to(proxy))
     })
     .bind(("127.0.0.1", 8000))?
     .run()

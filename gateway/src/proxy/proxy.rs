@@ -1,5 +1,6 @@
-use actix_web::{web, HttpRequest, HttpResponse, Error};
+use actix_web::{web,error, HttpRequest, HttpResponse, Error};
 use rand::prelude::*;
+use reqwest::Method;
 use tokio::sync::RwLock;
 use std::sync::Arc;
 use std::collections::HashMap;
@@ -60,7 +61,7 @@ pub async fn proxy(
             }
         } else {
             error!("[{}] Service not found: {}", request_id, service_name);
-            return Err(actix_web::error::ErrorNotFound("Service not found"));
+            return Err(error::ErrorNotFound("Service not found"));
         }
     }
 
@@ -70,63 +71,75 @@ pub async fn proxy(
         .get(&service_name)
         .ok_or_else(|| {
             error!("[{}] Service not found after activation: {}", request_id, service_name);
-            actix_web::error::ErrorNotFound("Service not found")
+            error::ErrorNotFound("Service not found")
         })?;
 
     let instance = select_instance(service)
         .ok_or_else(|| {
             error!("[{}] No healthy instances available for service: {}", request_id, service_name);
-            actix_web::error::ErrorServiceUnavailable("No healthy instances")
+            error::ErrorServiceUnavailable("No healthy instances")
         })?;
 
     // Construct URI safely
     let base_url = Url::parse(&instance.url).map_err(|e| {
         error!("[{}] Invalid instance URL {}: {}", request_id, instance.url, e);
-        actix_web::error::ErrorBadGateway("Invalid upstream URL")
+        error::ErrorBadGateway("Invalid upstream URL")
     })?;
     let uri = base_url.join(&tail).map_err(|e| {
         error!("[{}] Failed to construct URI with tail {}: {}", request_id, tail, e);
-        actix_web::error::ErrorBadGateway("Invalid URI")
+        error::ErrorBadGateway("Invalid URI")
     })?;
 
     info!("[{}] Proxying to: {}", request_id, uri);
 
     // Create forwarded request with selective headers
-    let mut forwarded_req = client.request(req.method().clone(), uri.as_str());
+    let method = req.method().as_str().parse::<Method>().map_err(|e| {
+        error!("Invalid HTTP method: {}", e);
+        error::ErrorBadRequest("Invalid HTTP method")
+    })?;
+    let mut forwarded_req = client.request(method, uri.as_str());
     for (key, value) in req.headers().iter() {
-        if key != "Host" && key != "Connection" { // Skip sensitive headers
-            forwarded_req = forwarded_req.header(key, value);
+        if key != "Host" && key != "Connection" {
+            if let Ok(val_str) = value.to_str() {
+                forwarded_req = forwarded_req.header(key.as_str(), val_str);
+            }
         }
     }
 
     // Send request with timeout
     let response = tokio::time::timeout(
         std::time::Duration::from_secs(30),
-        forwarded_req.send_body(body),
+        forwarded_req.body(body.clone()).send(),
     )
         .await
         .map_err(|_| {
             error!("[{}] Upstream request timed out for: {}", request_id, uri);
-            actix_web::error::ErrorRequestTimeout("Upstream timeout")
+            error::ErrorRequestTimeout("Upstream timeout")
         })?
         .map_err(|e| {
             error!("[{}] Failed to forward request to {}: {}", request_id, uri, e);
-            actix_web::error::ErrorBadGateway("Upstream error")
+            error::ErrorBadGateway("Upstream error")
         })?;
 
-    let status = response.status();
-    let headers = response.headers();
+    let status = actix_web::http::StatusCode::from_u16(response.status().as_u16()).map_err(|e| {
+        error!("[{}] Invalid status code: {}", request_id, e);
+        error::ErrorInternalServerError("Invalid status code")
+    })?;
+
+    let headers = response.headers().clone();
     let body = response
         .bytes()
         .await
         .map_err(|e| {
             error!("[{}] Failed to read upstream response: {}", request_id, e);
-            actix_web::error::ErrorInternalServerError("Error reading upstream response")
+            error::ErrorInternalServerError("Error reading upstream response")
         })?;
 
     let mut client_resp = HttpResponse::build(status);
     for (key, value) in headers.iter() {
-        client_resp.append_header((key.clone(), value.clone()));
+        if let Ok(val_str) = value.to_str() {
+            client_resp.append_header((key.as_str(), val_str));
+        }
     }
 
     Ok(client_resp.body(body))
