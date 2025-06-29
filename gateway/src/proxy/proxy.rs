@@ -1,11 +1,11 @@
-use actix_web::{web,error, HttpRequest, HttpResponse, Error};
+use crate::config::{InstanceStatus, ServiceConfig, ServiceInstance};
+use actix_web::{Error, HttpRequest, HttpResponse, error, web};
+use log::{error, info};
 use rand::prelude::*;
 use reqwest::Method;
-use tokio::sync::RwLock;
-use std::sync::Arc;
 use std::collections::HashMap;
-use crate::config::{ServiceConfig, ServiceInstance, InstanceStatus};
-use log::{info, error};
+use std::sync::Arc;
+use tokio::sync::RwLock;
 use url::Url;
 
 pub async fn activate_service(
@@ -17,7 +17,10 @@ pub async fn activate_service(
         for instance in service.instances.iter_mut() {
             if instance.active != InstanceStatus::Healthy {
                 instance.active = InstanceStatus::Healthy;
-                info!("Activated service instance: {} for {}", instance.url, service_name);
+                info!(
+                    "Activated service instance: {} for {}",
+                    instance.url, service_name
+                );
                 break;
             }
         }
@@ -48,15 +51,25 @@ pub async fn proxy(
 
     // Generate a request ID for logging
     let request_id = uuid::Uuid::new_v4().to_string();
-    info!("[{}] Proxying request for service: {}", request_id, service_name);
+    info!(
+        "[{}] Proxying request for service: {}",
+        request_id, service_name
+    );
 
     // Check and activate service if needed
     {
         let services_read = services.read().await;
         if let Some(service) = services_read.get(&service_name) {
-            if !service.instances.iter().any(|i| i.active == InstanceStatus::Healthy) {
+            if !service
+                .instances
+                .iter()
+                .any(|i| i.active == InstanceStatus::Healthy)
+            {
                 drop(services_read); // Release read lock before write
-                info!("[{}] No healthy instances found, attempting to activate service: {}", request_id, service_name);
+                info!(
+                    "[{}] No healthy instances found, attempting to activate service: {}",
+                    request_id, service_name
+                );
                 activate_service(services.clone(), &service_name).await;
             }
         } else {
@@ -67,26 +80,35 @@ pub async fn proxy(
 
     // Fetch service and select instance
     let services_read = services.read().await;
-    let service = services_read
-        .get(&service_name)
-        .ok_or_else(|| {
-            error!("[{}] Service not found after activation: {}", request_id, service_name);
-            error::ErrorNotFound("Service not found")
-        })?;
+    let service = services_read.get(&service_name).ok_or_else(|| {
+        error!(
+            "[{}] Service not found after activation: {}",
+            request_id, service_name
+        );
+        error::ErrorNotFound("Service not found")
+    })?;
 
-    let instance = select_instance(service)
-        .ok_or_else(|| {
-            error!("[{}] No healthy instances available for service: {}", request_id, service_name);
-            error::ErrorServiceUnavailable("No healthy instances")
-        })?;
+    let instance = select_instance(service).ok_or_else(|| {
+        error!(
+            "[{}] No healthy instances available for service: {}",
+            request_id, service_name
+        );
+        error::ErrorServiceUnavailable("No healthy instances")
+    })?;
 
     // Construct URI safely
     let base_url = Url::parse(&instance.url).map_err(|e| {
-        error!("[{}] Invalid instance URL {}: {}", request_id, instance.url, e);
+        error!(
+            "[{}] Invalid instance URL {}: {}",
+            request_id, instance.url, e
+        );
         error::ErrorBadGateway("Invalid upstream URL")
     })?;
     let uri = base_url.join(&tail).map_err(|e| {
-        error!("[{}] Failed to construct URI with tail {}: {}", request_id, tail, e);
+        error!(
+            "[{}] Failed to construct URI with tail {}: {}",
+            request_id, tail, e
+        );
         error::ErrorBadGateway("Invalid URI")
     })?;
 
@@ -111,29 +133,30 @@ pub async fn proxy(
         std::time::Duration::from_secs(30),
         forwarded_req.body(body.clone()).send(),
     )
-        .await
-        .map_err(|_| {
-            error!("[{}] Upstream request timed out for: {}", request_id, uri);
-            error::ErrorRequestTimeout("Upstream timeout")
-        })?
-        .map_err(|e| {
-            error!("[{}] Failed to forward request to {}: {}", request_id, uri, e);
-            error::ErrorBadGateway("Upstream error")
-        })?;
-
-    let status = actix_web::http::StatusCode::from_u16(response.status().as_u16()).map_err(|e| {
-        error!("[{}] Invalid status code: {}", request_id, e);
-        error::ErrorInternalServerError("Invalid status code")
+    .await
+    .map_err(|_| {
+        error!("[{}] Upstream request timed out for: {}", request_id, uri);
+        error::ErrorRequestTimeout("Upstream timeout")
+    })?
+    .map_err(|e| {
+        error!(
+            "[{}] Failed to forward request to {}: {}",
+            request_id, uri, e
+        );
+        error::ErrorBadGateway("Upstream error")
     })?;
 
-    let headers = response.headers().clone();
-    let body = response
-        .bytes()
-        .await
-        .map_err(|e| {
-            error!("[{}] Failed to read upstream response: {}", request_id, e);
-            error::ErrorInternalServerError("Error reading upstream response")
+    let status =
+        actix_web::http::StatusCode::from_u16(response.status().as_u16()).map_err(|e| {
+            error!("[{}] Invalid status code: {}", request_id, e);
+            error::ErrorInternalServerError("Invalid status code")
         })?;
+
+    let headers = response.headers().clone();
+    let body = response.bytes().await.map_err(|e| {
+        error!("[{}] Failed to read upstream response: {}", request_id, e);
+        error::ErrorInternalServerError("Error reading upstream response")
+    })?;
 
     let mut client_resp = HttpResponse::build(status);
     for (key, value) in headers.iter() {

@@ -5,10 +5,7 @@ const TOKEN: &str = "my-secret-token";
 
 #[tokio::test]
 async fn test_health_check() {
-    let res = Client::new()
-        .get(&format!("{BASE}/health"))
-        .send()
-        .await;
+    let res = Client::new().get(&format!("{BASE}/health")).send().await;
     assert_eq!(res.unwrap().status(), 200);
 }
 
@@ -37,9 +34,12 @@ async fn test_unauthorized_request() {
 
 #[tokio::test]
 async fn test_authorized_request() {
-    let res = Client::new().get(&format!("{BASE}/secure"))
+    let res = Client::new()
+        .get(&format!("{BASE}/secure"))
         .header("Authorization", format!("Bearer {}", TOKEN))
-        .send().await.expect("Failed");
+        .send()
+        .await
+        .expect("Failed");
     assert_eq!(res.status(), 200);
     let body = res.text().await.unwrap();
     assert!(body.contains("Secure data"));
